@@ -62,7 +62,7 @@ const Nav = () => {
                   onClick={() => signIn(provider.id)}
                   className='black_btn'
                 >
-                  Sign In
+                  Sign In with {provider.name}
                 </button>
               ))}
           </>
@@ -112,7 +112,8 @@ const Nav = () => {
           </div>
         ) : (
           <>
-            {providers &&
+            {session !== undefined &&
+              providers &&
               Object.values(providers).map((provider) => (
                 <button
                   type='button'
@@ -120,7 +121,7 @@ const Nav = () => {
                   onClick={() => signIn(provider.id)}
                   className='black_btn'
                 >
-                  Sign In
+                  Sign In with {provider.name}
                 </button>
               ))}
           </>
