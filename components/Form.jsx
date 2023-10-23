@@ -12,7 +12,7 @@ const Form = ({ type, post, setPost, isSubmitting, handleSubmit }) => {
       >
         <label>
           <span className='font-satoshi font-semibold text-base text-gray-700'>
-            AI Prompt
+            Prompt
           </span>
           <textarea
             value={post.prompt}
