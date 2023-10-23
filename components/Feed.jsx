@@ -26,16 +26,6 @@ const Feed = () => {
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [searchedResults, setSearchedResults] = useState([]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch('/api/prompt');
-      const data = await response.json();
-
-      setAllPosts(data);
-    };
-    fetchPosts();
-  }, []);
-
   // 검색 결과
   const filterPrompts = useCallback(
     (searchtext) => {
@@ -76,6 +66,16 @@ const Feed = () => {
     },
     [filterPrompts],
   );
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const response = await fetch('/api/prompt');
+      const data = await response.json();
+
+      setAllPosts(data);
+    };
+    fetchPosts();
+  }, []);
 
   return (
     <section className='feed'>

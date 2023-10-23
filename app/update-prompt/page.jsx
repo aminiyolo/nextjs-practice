@@ -7,25 +7,10 @@ import Form from '@components/Form';
 
 const UpdatePrompt = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const promptId = searchParams.get('id');
+  const promptId = useSearchParams().get('id');
 
   const [post, setPost] = useState({ prompt: '', tag: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    const getPromptDetails = async () => {
-      const response = await fetch(`/api/prompt/${promptId}`);
-      const data = await response.json();
-
-      setPost({
-        prompt: data.prompt,
-        tag: data.tag,
-      });
-    };
-
-    if (promptId) getPromptDetails();
-  }, [promptId]);
 
   const updatePrompt = useCallback(
     async (e) => {
@@ -52,8 +37,22 @@ const UpdatePrompt = () => {
         setIsSubmitting(false);
       }
     },
-    [promptId],
+    [promptId, post],
   );
+
+  useEffect(() => {
+    const getPromptDetails = async () => {
+      const response = await fetch(`/api/prompt/${promptId}`);
+      const data = await response.json();
+
+      setPost({
+        prompt: data.prompt,
+        tag: data.tag,
+      });
+    };
+
+    if (promptId) getPromptDetails();
+  }, [promptId]);
 
   return (
     <Form

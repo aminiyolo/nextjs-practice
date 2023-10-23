@@ -15,13 +15,13 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
   const handleProfileClick = useCallback(() => {
     if (post.creator._id === session?.user.id) return router.push('/profile');
     router.push(`/profile/${post.creator._id}?name=${post.creator.username}`);
-  }, []);
+  }, [post.creator]);
 
   const handleCopy = useCallback(() => {
     setCopied(post.prompt);
     navigator.clipboard.writeText(post.prompt);
     setTimeout(() => setCopied(false), 3000);
-  }, []);
+  }, [post.prompt]);
 
   return (
     <div className='prompt_card'>

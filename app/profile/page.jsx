@@ -12,6 +12,32 @@ const MyProfile = () => {
 
   const [myPosts, setMyPosts] = useState([]);
 
+  const handleEdit = useCallback((post) => {
+    router.push(`/update-prompt?id=${post._id}`);
+  }, []);
+
+  const handleDelete = useCallback(
+    async (post) => {
+      const hasConfirmed = confirm(
+        'Are you sure you want to delete this prompt?',
+      );
+
+      if (hasConfirmed) {
+        try {
+          await fetch(`/api/prompt/${post._id.toString()}`, {
+            method: 'DELETE',
+          });
+
+          const filteredPosts = myPosts.filter((item) => item._id !== post._id);
+          setMyPosts(filteredPosts);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
+    [myPosts],
+  );
+
   useEffect(() => {
     const fetchPosts = async () => {
       const response = await fetch(`/api/users/${session?.user.id}/posts`);
@@ -23,29 +49,9 @@ const MyProfile = () => {
     if (session?.user.id) fetchPosts();
   }, [session?.user.id]);
 
-  const handleEdit = useCallback((post) => {
-    router.push(`/update-prompt?id=${post._id}`);
-  }, []);
-
-  const handleDelete = useCallback(async (post) => {
-    const hasConfirmed = confirm(
-      'Are you sure you want to delete this prompt?',
-    );
-
-    if (hasConfirmed) {
-      try {
-        await fetch(`/api/prompt/${post._id.toString()}`, {
-          method: 'DELETE',
-        });
-
-        const filteredPosts = myPosts.filter((item) => item._id !== post._id);
-
-        setMyPosts(filteredPosts);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }, []);
+  useEffect(() => {
+    if (session === null) router.push('/');
+  }, [session]);
 
   return (
     <Profile
