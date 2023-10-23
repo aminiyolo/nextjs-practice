@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import PromptCard from './PromptCard';
 
@@ -26,46 +26,56 @@ const Feed = () => {
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [searchedResults, setSearchedResults] = useState([]);
 
-  const fetchPosts = async () => {
-    const response = await fetch('/api/prompt');
-    const data = await response.json();
-
-    setAllPosts(data);
-  };
-
   useEffect(() => {
+    const fetchPosts = async () => {
+      const response = await fetch('/api/prompt');
+      const data = await response.json();
+
+      setAllPosts(data);
+    };
     fetchPosts();
   }, []);
 
-  const filterPrompts = (searchtext) => {
-    const regex = new RegExp(searchtext, 'i'); // 'i' flag for case-insensitive search
-    return allPosts.filter(
-      (item) =>
-        regex.test(item.creator.username) ||
-        regex.test(item.tag) ||
-        regex.test(item.prompt),
-    );
-  };
+  // 검색 결과
+  const filterPrompts = useCallback(
+    (searchtext) => {
+      const regex = new RegExp(searchtext, 'i'); // 'i' flag for case-insensitive search
+      return allPosts.filter(
+        (item) =>
+          regex.test(item.creator.username) ||
+          regex.test(item.tag) ||
+          regex.test(item.prompt),
+      );
+    },
+    [allPosts],
+  );
 
-  const handleSearchChange = (e) => {
-    clearTimeout(searchTimeout);
-    setSearchText(e.target.value);
+  // 검색어 변경
+  const handleSearchChange = useCallback(
+    (e) => {
+      clearTimeout(searchTimeout);
+      setSearchText(e.target.value);
 
-    // debounce method
-    setSearchTimeout(
-      setTimeout(() => {
-        const searchResult = filterPrompts(e.target.value);
-        setSearchedResults(searchResult);
-      }, 500),
-    );
-  };
+      // debounce method
+      setSearchTimeout(
+        setTimeout(() => {
+          const searchResult = filterPrompts(e.target.value);
+          setSearchedResults(searchResult);
+        }, 500),
+      );
+    },
+    [filterPrompts],
+  );
 
-  const handleTagClick = (tagName) => {
-    setSearchText(tagName);
+  const handleTagClick = useCallback(
+    (tagName) => {
+      setSearchText(tagName);
 
-    const searchResult = filterPrompts(tagName);
-    setSearchedResults(searchResult);
-  };
+      const searchResult = filterPrompts(tagName);
+      setSearchedResults(searchResult);
+    },
+    [filterPrompts],
+  );
 
   return (
     <section className='feed'>
